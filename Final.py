@@ -240,24 +240,25 @@ def listOfWaves(ourPoints,dir_Name):
         name = "point1.wav"
         var_name = i
         point_name = name[:5]+ str(var_name) +name[6:]
-        names = np.concatenate((names,[point_name]))
+        
         waveout(os.path.join(path,point_name),A,P,F)
 
         i+=1
         
-    return names
+    return dir_Name
 
 
 #This function takes in the list of names and pulls out the data from each .wav file and assigns those points to a new list.
-def listOfPointsFromNames(names):
+def listOfPointsFromNames(name):
     listOfPoints = []
-    direct = names[0]
-    print(len(names))
-    for i in (range((len(names)-1))):
-        print(i)
-        file = os.path.join(direct, names[i+1])
+    direct = name
+    
+    for file in os.listdir(direct):
 
-        A, P, F = freq(file,0,500)
+        f = os.path.join(direct,file)
+        
+
+        A, P, F = freq(f,0,500)
 
         point = [crs(A,P,F)]
 
