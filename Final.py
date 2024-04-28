@@ -63,6 +63,7 @@ def freq(file, xlow = 0, xhigh = 5000):
     #dataToRead = data[int(start_time * sr / 1000) : int(end_time * sr / 1000) + 1]
     
     
+
     # Fourier Transform
     N = len(data)
     yf = rfft(data)
@@ -98,8 +99,16 @@ def freq(file, xlow = 0, xhigh = 5000):
     peak = np.abs(yf_norm[idx])
     
     phases_norm = (phases-phase_norm-np.pi*xf/(N))
-    phase_max = np.max(phases_norm[(int(freq-5)):(int(freq+5))])
-    phase_min = np.min(phases_norm[(int(freq-5)):(int(freq+5))])
+
+    if phases_norm:
+      phase_max = np.max(phases_norm[(int(freq-5)):(int(freq+5))])
+      phase_min = np.min(phases_norm[(int(freq-5)):(int(freq+5))])
+    else:
+      phase_max = -1
+      phase_min = -1
+      
+    
+    
 
     if phase_max<np.pi:
         phase = phase_max
