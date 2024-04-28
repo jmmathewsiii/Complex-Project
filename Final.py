@@ -265,11 +265,3 @@ def listOfPointsFromNames(name):
         listOfPoints = np.concatenate((listOfPoints,point))
         
     return listOfPoints
-
-        
-
-        
-    
-
-
-    
