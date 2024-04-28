@@ -349,8 +349,14 @@ complex_list = listToComplex(message_list)
 
 encrypted = Parker_Scramble(complex_list, constlist)
 
-name = listOfWaves(encrypted, 'Complex-Project/First_Test')
-delivered = listOfPointsFromNames(name)
+for n in encrypted:
+  print(n.arg)
 
-decrypted = Reverse_Parker_Scramble(delivered, constlist)
+name = listOfWaves(encrypted, 'Complex-Project/First_Test')
+
+delivered = listOfPointsFromNames(name)
+print("\n")
+for n in delivered:
+  print(n.arg)
+decrypted = Reverse_Parker_Scramble(encrypted, constlist)
 
