@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random as rand
+import Final as final
 
 class complex:
   def __init__(self,x,y):
@@ -154,3 +155,16 @@ def Parker_Scramble(crslist,constlist):
   finallist=[i.crs() for i in explist]
 
   return finallist
+
+message = input("Enter a message to transmit:\n")
+
+binary_message = toBinary(message)
+
+message_list = binaryToList(binary_message)
+
+complex_list = listToComplex(message_list)
+
+encrypted = Parker_Scramble(complex_list, constlist)
+
+name = final.listOfWaves(encrypted, 'First_Test')
+
