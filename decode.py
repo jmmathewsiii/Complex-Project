@@ -173,6 +173,8 @@ def binaryToMessage(bin_str):
 name = "Complex-Project/First_Test"
 
 encrypted = final.listOfPointsFromNames(name)
+for n in encrypted:
+    print(n.arg)
 
 decrypted = Reverse_Parker_Scramble(encrypted, constlist)
 

@@ -3,142 +3,98 @@ from scipy.fft import *
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import os
-
-class cra:
-  def __init__(self,rad,arg):
-    self.rad=rad
-    self.arg=arg
-    self.x=rad*np.cos(arg)
-    self.y=rad*np.sin(arg)
-
-  def log(self):
-    return complex(np.log(self.rad),self.arg)
-
-  def exp(self):
-    return cra(np.exp(self.x),self.y)
-
-  def crs(self):
-    a=self.arg % (2*np.pi)
-    return crs(self.rad,a,round(((self.arg-a)/(2*np.pi))))
-
-  def complex(self):
-    return complex(self.r*np.cos(self.arg),self.r*np.sin(self.arg))
-
-class crs:
-  def __init__(self,rad,arg,branch):
-    self.rad=rad
-    self.arg=arg
-    self.branch=branch
-    self.x=rad*np.cos(arg)
-    self.y=rad*np.sin(arg)
-
-  def cra(self):
-    return cra(self.rad,self.arg+2*np.pi*self.branch)
-
-
-
-
-
-
-
-
-
-
-
-
-
+import encode as encode
 
 #this function is for deciphering .wav files
 
 def freq(file, xlow = 0, xhigh = 5000):
+  # Open the file and convert to mono
+  sr, data = wavfile.read(file)
+  if data.ndim > 1:
+      data = data[:, 0]
+  else:
+      pass
 
-    # Open the file and convert to mono
-    sr, data = wavfile.read(file)
-    if data.ndim > 1:
-        data = data[:, 0]
-    else:
-        pass
+  # Return a slice of the data from start_time to end_time
+  #dataToRead = data[int(start_time * sr / 1000) : int(end_time * sr / 1000) + 1]
+  
+  
 
-    # Return a slice of the data from start_time to end_time
-    #dataToRead = data[int(start_time * sr / 1000) : int(end_time * sr / 1000) + 1]
+  # Fourier Transform
+  N = len(data)
+  yf = rfft(data)
+  xf = rfftfreq(N, 1 / sr)
+
+  #normalizing frequency data based off of carrier wave
+  
+  sorted_indices = np.argsort(yf)
+  phases = np.angle(yf)
+  
+
+  amp_norm = np.max(yf[int(190):int(210)])
+  phase_norm_index = sorted_indices[len(yf)-2]
+  phase_norm = np.max(phases[190:200])
+
+  yf_norm = yf/amp_norm
+  # Uncomment these to see the frequency spectrum as a plot
+  """plt.figure(0)
+  plt.plot(xf, np.abs(yf_norm))
+  plt.xlim(xlow,xhigh)
+  #plt.xlim(0,50)
+  #plt.ylim(1000,1030)
+  plt.show()"""
+  
+
+  
+
+  # Get the most dominant frequency and return it
+  
+
+  idx = np.argmax(yf_norm)
+  freq = xf[idx]
+  peak = np.abs(yf_norm[idx])
+  
+  phases_norm = (phases-phase_norm-np.pi*xf/(N))
+
+  if (len(phases_norm) != 0):
+    phase_max = np.max(phases_norm[(int(freq-5)):(int(freq+5))])
+    phase_min = np.min(phases_norm[(int(freq-5)):(int(freq+5))])
+  else:
+    phase_max = -1
+    phase_min = -1
     
-    
+  
+  
 
-    # Fourier Transform
-    N = len(data)
-    yf = rfft(data)
-    xf = rfftfreq(N, 1 / sr)
+  if phase_max<np.pi:
+      phase = phase_max
+  else:
+      phase = phase_min
+  
+  #Uncomment these to plot the original function
+  """
+  time = N/sr
 
-    #normalizing frequency data based off of carrier wave
-    
-    sorted_indices = np.argsort(yf)
-    phases = np.angle(yf)
-    
-
-    amp_norm = np.max(yf[int(190):int(210)])
-    phase_norm_index = sorted_indices[len(yf)-2]
-    phase_norm = np.max(phases[190:200])
-
-    yf_norm = yf/amp_norm
-    # Uncomment these to see the frequency spectrum as a plot
-    """plt.figure(0)
-    plt.plot(xf, np.abs(yf_norm))
-    plt.xlim(xlow,xhigh)
-    #plt.xlim(0,50)
-    #plt.ylim(1000,1030)
-    plt.show()"""
-    
-
-    
-
-    # Get the most dominant frequency and return it
-    
-
-    idx = np.argmax(np.abs(yf_norm))
-    freq = xf[idx]
-    peak = np.abs(yf_norm[idx])
-    
-    phases_norm = (phases-phase_norm-np.pi*xf/(N))
-
-    if phases_norm:
-      phase_max = np.max(phases_norm[(int(freq-5)):(int(freq+5))])
-      phase_min = np.min(phases_norm[(int(freq-5)):(int(freq+5))])
-    else:
-      phase_max = -1
-      phase_min = -1
-      
-    
-    
-
-    if phase_max<np.pi:
-        phase = phase_max
-    else:
-       phase = phase_min
-    
-    #Uncomment these to plot the original function
-    """
-    time = N/sr
-
-    data_norm = data/np.abs(amp_norm)
-    t = np.linspace(0,time,N)
-    plt.figure(1)
-    plt.plot(t,data_norm)
-    plt.xlim(xlow,xhigh)
-    """
+  data_norm = data/np.abs(amp_norm)
+  t = np.linspace(0,time,N)
+  plt.figure(1)
+  plt.plot(t,data_norm)
+  plt.xlim(xlow,xhigh)
+  """
 
 
-    #Uncomment these to see the phase plot
-    """
-    plt.figure(2)
-    plt.plot(xf,phases_norm)
-    plt.xlim(xlow,xhigh)
-    
-    #plt.angle_spectrum(yf_norm,xf)
-    plt.xlim(0,6)
-    plt.ylim(-0.61,-0.59)"""
+  #Uncomment these to see the phase plot
+  """
+  plt.figure(2)
+  plt.plot(xf,phases_norm)
+  plt.xlim(xlow,xhigh)
+  
+  #plt.angle_spectrum(yf_norm,xf)
+  plt.xlim(0,6)
+  plt.ylim(-0.61,-0.59)"""
 
-    
-    return peak, phase*2, freq/60
+  
+  return peak, phase*2, ((freq/60)-1)
 
 
 
@@ -226,7 +182,7 @@ def waveout(name,A1,P1,F1,A2=1,P2=0,F2=200,N = 10000):
       
     t = np.linspace(0,2*np.pi,N)#np.arange(N)/sample_rate
 
-    a_sin = [A1*A2*np.sin(60*F1*t+P1/2),A2*np.sin(F2*t+P2/2)]#+np.sin(4*t)+np.sin(5*t)+np.sin(6*t)
+    a_sin = [A1*A2*np.sin(60*(F1+1)*t+P1/2),A2*np.sin(F2*t+P2/2)]#+np.sin(4*t)+np.sin(5*t)+np.sin(6*t)
     a = (a_sin[0]+a_sin[1])/A1
     wavfile.write(name,N,a)
     return a
@@ -237,9 +193,10 @@ def listOfWaves(ourPoints,dir_Name):
 
     path ='./' + dir_Name
 
-    os.mkdir(path)
-    names = [path]
-    for i in range(len(ourPoints)):
+    if(os.path.exists(path) == False):
+      os.mkdir(path)
+      names = [path]
+      for i in range(len(ourPoints)):
 
         point = ourPoints[i]
         
@@ -247,8 +204,8 @@ def listOfWaves(ourPoints,dir_Name):
         P = point.arg
         F = point.branch
         name = "point1.wav"
-        var_name = i
-        point_name = name[:5]+ str(var_name) +name[6:]
+        var_name = str(i).rjust(2, '0')
+        point_name = name[:5] + var_name + name[6:]
         
         waveout(os.path.join(path,point_name),A,P,F)
 
@@ -261,16 +218,18 @@ def listOfWaves(ourPoints,dir_Name):
 def listOfPointsFromNames(name):
     listOfPoints = []
     direct = name
+
+    lst = os.listdir(direct)
+    lst.sort()
     
-    for file in os.listdir(direct):
+    for filename in lst:
 
-        f = os.path.join(direct,file)
+      f = os.path.join(direct,filename)
         
+      A, P, F = freq(f,0,500)
 
-        A, P, F = freq(f,0,500)
+      point = encode.crs(A,P,F)
 
-        point = [crs(A,P,F)]
-
-        listOfPoints = np.concatenate((listOfPoints,point))
+      listOfPoints.append(point)
         
     return listOfPoints
