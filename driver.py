@@ -98,23 +98,8 @@ for i in range(16):
 
 reverse_coordinates = {v: k for k, v in coordinates.items()}
 
-
-      
-# def getRemainder(message):
-#     binary = ''.join(format(ord(i), '08b') for i in message)
-#     r = (4 - (len(binary) % 4))
-#     return r
-
 def toBinary(message):
     binary = ''.join(format(ord(i), '08b') for i in message)
-    # new_bin = ""
-
-    # r = getRemainder(message)
-
-    # for i in range(r):
-    #     new_bin += "0"
-
-    # new_bin += binary
 
     return binary
 
@@ -192,7 +177,6 @@ def Reverse_Parker_Scramble(crslist,constlist):
   return finallist
 
 def approximate(cnums):
-  # 2, 3, 4, 6
   new_nums = []
   
   for cnum in cnums:
@@ -207,12 +191,6 @@ def approximate(cnums):
     elif (r == 6):
       new_nums.append(startlist[12 + cnum.branch])
 
-  
-  # if (new_num.branch < 0):
-  #   new_num.branch = 0
-
-  # new_num.branch = cnum.branch
-      
   return new_nums
 
 def complexToList(cnums):
@@ -228,10 +206,7 @@ def listToBinary(nums):
         bin_str += n
     
     return bin_str
-
-# def binaryToDecimal(bin_substr):
     
-
 def binaryToMessage(bin_str):
     dec_nums = []
 
@@ -251,48 +226,21 @@ def binaryToMessage(bin_str):
 message = input("Enter a message to transmit:\n")
 
 binary_message = toBinary(message)
-# print(binary_message + "\n")
 
 message_list = binaryToList(binary_message)
-# for n in message_list:
-#   print(n)
 
 complex_list = listToComplex(message_list)
 
-# print("This is the original list")
-# printCoordinates(complex_list)
-
-# print("\nThis is the encrypted list")
 encrypted = Parker_Scramble(complex_list, constlist)
-# printCoordinates(encrypted)
 
 decrypted = Reverse_Parker_Scramble(encrypted, constlist)
-# print("\nThis is the decrypted list")
-# printCoordinates(decrypted)
 
 approximated = approximate(decrypted)
-# print("\nThis is the approximated list")
-# printCoordinates(approximated)
 
 decoded = complexToList(approximated)
-# print("\nThis is the decoded list")
-# for n in decoded:
-#   print(n)
 
 new_bin_str = listToBinary(decoded)
-# print("\nThis is the decrypted binary")
-# print(new_bin_str)
 
 new_message = binaryToMessage(new_bin_str)
-print("The received message is:", end = " ")
+print("\nThe received message is:")
 print(new_message)
-
-
-
-'''
-Have a list of crs points.
-Parker scramble that list
-Xavier does magic on them
-Parker unscramble the list
-Make algorithm to align the new points to the original dictionary
-'''
