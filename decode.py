@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random as rand
+import Final as final
+from scipy.fft import *
+from scipy.io import wavfile
+import os
 
 class complex:
   def __init__(self,x,y):
@@ -165,6 +169,8 @@ def binaryToMessage(bin_str):
       m += c
 
     return m
+
+encrypted = final.listOfPointsFromNames('./First_Test')
 
 decrypted = Reverse_Parker_Scramble(encrypted, constlist)
 
