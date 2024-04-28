@@ -170,7 +170,9 @@ def binaryToMessage(bin_str):
 
     return m
 
-encrypted = final.listOfPointsFromNames('./First_Test')
+name = "Complex-Project/First_Test"
+
+encrypted = final.listOfPointsFromNames(name)
 
 decrypted = Reverse_Parker_Scramble(encrypted, constlist)
 
