@@ -1,4 +1,3 @@
-
 import numpy as np
 from scipy.fft import *
 from scipy.io import wavfile
@@ -77,16 +76,16 @@ def freq(file, xlow = 0, xhigh = 5000):
 
     amp_norm = np.max(yf[int(190):int(210)])
     phase_norm_index = sorted_indices[len(yf)-2]
-    phase_norm = np.max(phases[190:200])#+np.pi/2#phases[phase_norm_index]
+    phase_norm = np.max(phases[190:200])
 
     yf_norm = yf/amp_norm
     # Uncomment these to see the frequency spectrum as a plot
-    plt.figure(0)
+    """plt.figure(0)
     plt.plot(xf, np.abs(yf_norm))
     plt.xlim(xlow,xhigh)
     #plt.xlim(0,50)
     #plt.ylim(1000,1030)
-    plt.show()
+    plt.show()"""
     
 
     
@@ -107,7 +106,8 @@ def freq(file, xlow = 0, xhigh = 5000):
     else:
        phase = phase_min
     
-
+    #Uncomment these to plot the original function
+    """
     time = N/sr
 
     data_norm = data/np.abs(amp_norm)
@@ -115,19 +115,21 @@ def freq(file, xlow = 0, xhigh = 5000):
     plt.figure(1)
     plt.plot(t,data_norm)
     plt.xlim(xlow,xhigh)
+    """
 
 
-    
+    #Uncomment these to see the phase plot
+    """
     plt.figure(2)
     plt.plot(xf,phases_norm)
     plt.xlim(xlow,xhigh)
-
+    
     #plt.angle_spectrum(yf_norm,xf)
-    """plt.xlim(0,6)
+    plt.xlim(0,6)
     plt.ylim(-0.61,-0.59)"""
 
     
-    return peak, phase*2, freq/60#, time, N, sr
+    return peak, phase*2, freq/60
 
 
 
@@ -220,7 +222,8 @@ def waveout(name,A1,P1,F1,A2=1,P2=0,F2=200,N = 10000):
     wavfile.write(name,N,a)
     return a
     
-
+#This function takes in a list of points and the name of the directory and outputs the .wav files as a folder and returns a list of names with
+#the first value being the name of the directory
 def listOfWaves(ourPoints,dir_Name):
 
     path ='./' + dir_Name
@@ -244,14 +247,8 @@ def listOfWaves(ourPoints,dir_Name):
         
     return names
 
-def listOfNames(list):
-    names = []
-    base = "point"
-    waveBase = ".wav"
-    for i  in range(list):
-        name = base + str(i)+waveBase
-        names = np.concatenate((names,name))
 
+#This function takes in the list of names and pulls out the data from each .wav file and assigns those points to a new list.
 def listOfPointsFromNames(names):
     listOfPoints = []
     direct = names[0]
