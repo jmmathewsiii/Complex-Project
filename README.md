@@ -1,4 +1,3 @@
 # Complex-Project
-Welcome to the Complex Analysis Project Repository.
-Whenever you write code for the project, upload it into this repo
-so that all of us can access it whenever we need to.
+View encode.py to see all of the code for the implementation of the Parker Scramble.
+Note: If you are not an active group member on this project, do not edit this repository—it will be archived shortly.
