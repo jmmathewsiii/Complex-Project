@@ -51,7 +51,7 @@ def freq(file, xlow = 0, xhigh = 5000):
   else:
       phase = phase_min
   
-  return peak, phase*2, ((freq/60)-1)
+  return peak, phase*2, int((freq/60)-1)
 
 #This function is for checking values with a generated wave and not for deciphering .wav files
 def freq_nofile(wave, sr, xlow = 0, xhigh = 5000):
@@ -296,14 +296,14 @@ def Parker_Scramble(crslist,constlist):
   #This step and all of the following loglist steps add two of the constants to each element of the list and
   #then take the logarighm of them
 
-  loglist2= [(i.add(Complex(constlist[2],constlist[3]))).log() for i in loglist]
-  loglist3= [(i.add(Complex(constlist[4],constlist[5]))).log(bc=rand.randint(0,10)*200*np.pi) for i in loglist2]
-  #The branch specification here randomizes which branch the log function operates over in order to spread out
-  #the points more
+  # loglist2= [(i.add(Complex(constlist[2],constlist[3]))).log() for i in loglist]
+  # loglist3= [(i.add(Complex(constlist[4],constlist[5]))).log(bc=rand.randint(0,10)*200*np.pi) for i in loglist2]
+  # #The branch specification here randomizes which branch the log function operates over in order to spread out
+  # #the points more
 
-  loglist4= [(i.add(Complex(constlist[6],constlist[7]))).log(bc=rand.randint(0,100)*200*np.pi) for i in loglist3]
-  loglist5= [(i.add(Complex(constlist[8],constlist[9]))).log(bc=rand.randint(0,4)*2*np.pi) for i in loglist4]
-  radexpandlist=  [Complex((i.rad+1)*np.cos(i.arg),(i.rad+1)*np.sin(i.arg)) for i in loglist5]
+  # loglist4= [(i.add(Complex(constlist[6],constlist[7]))).log(bc=rand.randint(0,100)*200*np.pi) for i in loglist3]
+  # loglist5= [(i.add(Complex(constlist[8],constlist[9]))).log(bc=rand.randint(0,4)*2*np.pi) for i in loglist4]
+  radexpandlist=  [Complex((i.rad+1)*np.cos(i.arg),(i.rad+1)*np.sin(i.arg)) for i in loglist]
   #increases the radius of each of the Complex points by one, so that none of them fall inside the unit circle
 
   inverselist=[(i).reciprocal() for i in radexpandlist]
@@ -327,17 +327,64 @@ def Reverse_Parker_Scramble(crslist,constlist):
 
   radexpandlist=[i.reciprocal() for i in inverselist]
 
-  loglist5=[Complex((i.rad-1)*np.cos(i.arg),(i.rad-1)*np.sin(i.arg)) for i in radexpandlist]
-  loglist4=[(i.exponential()).add(Complex(-1*constlist[8],-1*constlist[9])) for i in loglist5]
-  loglist3=[(i.exponential()).add(Complex(-1*constlist[6],-1*constlist[7])) for i in loglist4]
-  loglist2=[(i.exponential()).add(Complex(-1*constlist[4],-1*constlist[5])) for i in loglist3]
-  loglist =[(i.exponential()).add(Complex(-1*constlist[2],-1*constlist[3])) for i in loglist2]
+  # loglist5=[Complex((i.rad-1)*np.cos(i.arg),(i.rad-1)*np.sin(i.arg)) for i in radexpandlist]
+  # loglist4=[(i.exponential()).add(Complex(-1*constlist[8],-1*constlist[9])) for i in loglist5]
+  # loglist3=[(i.exponential()).add(Complex(-1*constlist[6],-1*constlist[7])) for i in loglist4]
+  # loglist2=[(i.exponential()).add(Complex(-1*constlist[4],-1*constlist[5])) for i in loglist3]
+  loglist =[(i.exponential()).add(Complex(-1*constlist[2],-1*constlist[3])) for i in radexpandlist]
 
   cartesianlist=[(i.exponential()).add(Complex(-1*constlist[0],-1*constlist[1])) for i in loglist]
 
   finallist=[(i.expcra()).crs() for i in cartesianlist]
 
   return finallist
+
+def approximate(cnums):
+  new_nums = []
+  
+  for cnum in cnums:
+    r = int(round(cnum.rad))
+
+    if (r == 2):
+      new_nums.append(startlist[cnum.branch])
+    elif (r == 3):
+      new_nums.append(startlist[4 + cnum.branch])
+    elif (r == 4):
+      new_nums.append(startlist[8 + cnum.branch])
+    elif (r == 6):
+      new_nums.append(startlist[12 + cnum.branch])
+
+  return new_nums
+
+def complexToList(cnums):
+    nums = []
+    for cnum in cnums:
+        nums.append(reverse_coordinates[cnum])
+    
+    return nums
+
+def listToBinary(nums):
+    bin_str = ""
+    for n in nums:
+        bin_str += n
+    
+    return bin_str
+    
+def binaryToMessage(bin_str):
+    dec_nums = []
+
+    for i in range(int(len(bin_str) / 8)):
+        dec_nums.append(int(bin_str[i * 8: (i*8) + 8], 2))
+
+    chars = []
+    for num in dec_nums:
+        chars.append(chr(num))
+
+    m = ""
+    for c in chars:
+      m += c
+
+    return m
 
 message = input("Enter a message to transmit:\n")
 
@@ -349,14 +396,24 @@ complex_list = listToComplex(message_list)
 
 encrypted = Parker_Scramble(complex_list, constlist)
 
-for n in encrypted:
-  print(n.arg)
-
 name = listOfWaves(encrypted, 'Complex-Project/First_Test')
 
 delivered = listOfPointsFromNames(name)
-print("\n")
-for n in delivered:
-  print(n.arg)
-decrypted = Reverse_Parker_Scramble(encrypted, constlist)
+
+# for n in os.listdir(name):
+#   n = str('Complex-Project/First_Test/' + n)
+#   os.remove(n)
+# os.rmdir(name)
+
+decrypted = Reverse_Parker_Scramble(delivered, constlist)
+
+approximated = approximate(decrypted)
+
+decoded = complexToList(approximated)
+
+new_bin_str = listToBinary(decoded)
+
+new_message = binaryToMessage(new_bin_str)
+print("\nThe received message is:")
+print(new_message)
 
