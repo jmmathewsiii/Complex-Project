@@ -296,14 +296,14 @@ def Parker_Scramble(crslist,constlist):
   #This step and all of the following loglist steps add two of the constants to each element of the list and
   #then take the logarighm of them
 
-  # loglist2= [(i.add(Complex(constlist[2],constlist[3]))).log() for i in loglist]
-  # loglist3= [(i.add(Complex(constlist[4],constlist[5]))).log(bc=rand.randint(0,10)*200*np.pi) for i in loglist2]
-  # #The branch specification here randomizes which branch the log function operates over in order to spread out
-  # #the points more
+  loglist2= [(i.add(Complex(constlist[2],constlist[3]))).log() for i in loglist]
+  loglist3= [(i.add(Complex(constlist[4],constlist[5]))).log(bc=rand.randint(0,10)*200*np.pi) for i in loglist2]
+  #The branch specification here randomizes which branch the log function operates over in order to spread out
+  #the points more
 
-  # loglist4= [(i.add(Complex(constlist[6],constlist[7]))).log(bc=rand.randint(0,100)*200*np.pi) for i in loglist3]
-  # loglist5= [(i.add(Complex(constlist[8],constlist[9]))).log(bc=rand.randint(0,4)*2*np.pi) for i in loglist4]
-  radexpandlist=  [Complex((i.rad+1)*np.cos(i.arg),(i.rad+1)*np.sin(i.arg)) for i in loglist]
+  loglist4= [(i.add(Complex(constlist[6],constlist[7]))).log(bc=rand.randint(0,100)*200*np.pi) for i in loglist3]
+  loglist5= [(i.add(Complex(constlist[8],constlist[9]))).log(bc=rand.randint(0,4)*2*np.pi) for i in loglist4]
+  radexpandlist=  [Complex((i.rad+1)*np.cos(i.arg),(i.rad+1)*np.sin(i.arg)) for i in loglist5]
   #increases the radius of each of the Complex points by one, so that none of them fall inside the unit circle
 
   inverselist=[(i).reciprocal() for i in radexpandlist]
@@ -327,11 +327,11 @@ def Reverse_Parker_Scramble(crslist,constlist):
 
   radexpandlist=[i.reciprocal() for i in inverselist]
 
-  # loglist5=[Complex((i.rad-1)*np.cos(i.arg),(i.rad-1)*np.sin(i.arg)) for i in radexpandlist]
-  # loglist4=[(i.exponential()).add(Complex(-1*constlist[8],-1*constlist[9])) for i in loglist5]
-  # loglist3=[(i.exponential()).add(Complex(-1*constlist[6],-1*constlist[7])) for i in loglist4]
-  # loglist2=[(i.exponential()).add(Complex(-1*constlist[4],-1*constlist[5])) for i in loglist3]
-  loglist =[(i.exponential()).add(Complex(-1*constlist[2],-1*constlist[3])) for i in radexpandlist]
+  loglist5=[Complex((i.rad-1)*np.cos(i.arg),(i.rad-1)*np.sin(i.arg)) for i in radexpandlist]
+  loglist4=[(i.exponential()).add(Complex(-1*constlist[8],-1*constlist[9])) for i in loglist5]
+  loglist3=[(i.exponential()).add(Complex(-1*constlist[6],-1*constlist[7])) for i in loglist4]
+  loglist2=[(i.exponential()).add(Complex(-1*constlist[4],-1*constlist[5])) for i in loglist3]
+  loglist =[(i.exponential()).add(Complex(-1*constlist[2],-1*constlist[3])) for i in loglist2]
 
   cartesianlist=[(i.exponential()).add(Complex(-1*constlist[0],-1*constlist[1])) for i in loglist]
 
